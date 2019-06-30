@@ -21,7 +21,6 @@ import org.json.JSONException;
 import android.view.View;
 
 
-
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -56,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         // 4. Sending json message to Server
         JsonObjectRequest request = new JsonObjectRequest(
             Request.Method.POST,
-            "http://10.0.2.2:8000/authenticate",
+            "http://10.0.2.2:8080/authenticate",
             jsonMessage,
             new Response.Listener<JSONObject>() {
                 @Override
@@ -68,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                             showMessage("Authenticated");
                             Intent intent = new Intent(getActivity(), ContactsActivity.class);
                             startActivity(intent);
+
                         }
                         else {
                             showMessage("Wrong username or password");

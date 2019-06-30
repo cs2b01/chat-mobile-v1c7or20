@@ -2,6 +2,8 @@ package cs2901.utec.chat_mobile;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.content.Intent;
+import android.widget.TextView;
 
 public class ContactsActivity extends AppCompatActivity {
 
@@ -9,5 +11,11 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+
+        TextView contactsActivityTitle = (TextView)findViewById(R.id.contactsActivityTitle);
+        String username = getIntent().getStringExtra("username");
+        String title = username + "'s contacts";
+        contactsActivityTitle.setText(title);
     }
+
 }
