@@ -11,9 +11,9 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
-
+        Intent nombre = getIntent();
         TextView contactsActivityTitle = (TextView)findViewById(R.id.contactsActivityTitle);
-        String username = getIntent().getStringExtra("username");
+        String username = nombre.getStringExtra("username");
         String title = username + "'s contacts";
         contactsActivityTitle.setText(title);
     }
