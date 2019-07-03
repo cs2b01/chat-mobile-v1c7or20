@@ -1,5 +1,6 @@
 package cs2901.utec.chat_mobile;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -26,9 +27,22 @@ import java.util.ArrayList;
 public class ContactsActivity extends AppCompatActivity {
     private ArrayList<String>users =new ArrayList<>() ;
 
+
+    public Activity getActivity(){
+        return this;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setContentView(R.layout.activity_contacts);
         //----------------------------------------//
         /////RECIBIR DATOS //////////
@@ -50,6 +64,20 @@ public class ContactsActivity extends AppCompatActivity {
                                 String usuario = user.getString("username");
                                 users.add(usuario);
                             }
+                            RecyclerView recyclerView = findViewById(R.id.Lista);
+
+                            // use this setting to improve performance if you know that changes
+                            // in content do not change the layout size of the RecyclerView
+                            recyclerView.setHasFixedSize(true);
+
+
+                            // use a linear layout manager
+                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                            MyAdapter mAdapter = new MyAdapter(users);
+                            recyclerView.setAdapter(mAdapter);
+
+
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
@@ -74,17 +102,6 @@ public class ContactsActivity extends AppCompatActivity {
         contactsActivityTitle.setText(title);
         /////RECICLER VIEW///////////
 
-        RecyclerView recyclerView = findViewById(R.id.Lista);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
-
-        MyAdapter mAdapter = new MyAdapter(users);
-
-        recyclerView.setAdapter(mAdapter);
-        // use a linear layout manager
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         /////RECICLER VIEW///////////
