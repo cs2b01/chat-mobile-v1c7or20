@@ -3,109 +3,79 @@ package cs2901.utec.chat_mobile;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
-
+import java.util.HashMap;
+import java.util.Map;
 public class ContactsActivity extends AppCompatActivity {
-    private ArrayList<String>users =new ArrayList<>() ;
 
+    RecyclerView mRecyclerView;
+    RecyclerView.Adapter mAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_contacts);
+        mRecyclerView = findViewById(R.id.main_recycler_view);
+        setTitle("@"+getIntent().getExtras().get("username").toString());
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        getUsers();
+    }
 
     public Activity getActivity(){
         return this;
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setContentView(R.layout.activity_contacts);
-        //----------------------------------------//
-        /////RECIBIR DATOS //////////
-        JsonArrayRequest request = new JsonArrayRequest(
+    public void getUsers(){
+        String url = "http://10.0.2.2:8080/users";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        Map<String, String> params = new HashMap();
+        JSONObject parameters = new JSONObject(params);
+        final String userId = getIntent().getExtras().get("user_id").toString();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
-                "http://10.0.2.2:8080/users",
-                null,
-                new Response.Listener<JSONArray>() {
+                url,
+                parameters,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray response) {
-                        //TODO
-                        try{
-                            // Loop through the array elements
-                            for(int i=0;i<response.length();i++){
-                                // Get current json object
-                                JSONObject user = response.getJSONObject(i);
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray data = response.getJSONArray("data");
+                            mAdapter = new ChatAdapter(data, getActivity(), userId);
+                            mRecyclerView.setAdapter(mAdapter);
 
-                                // Get the current student (json object) data
-                                String usuario = user.getString("username");
-                                users.add(usuario);
-                            }
-                            RecyclerView recyclerView = findViewById(R.id.Lista);
-
-                            // use this setting to improve performance if you know that changes
-                            // in content do not change the layout size of the RecyclerView
-                            recyclerView.setHasFixedSize(true);
-
-
-                            // use a linear layout manager
-                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                            MyAdapter mAdapter = new MyAdapter(users);
-                            recyclerView.setAdapter(mAdapter);
-
-
-                        }catch (JSONException e){
+                        }catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }
-        );
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
-        /////RECIBIR DATOS //////////
-        //----------------------------------------//
+                }, new Response.ErrorListener() {
 
-        Intent nombre = getIntent();
-        TextView contactsActivityTitle = findViewById(R.id.contactsActivityTitle);
-        String username = nombre.getStringExtra("username");
-        String title = username + "'s contacts";
-        contactsActivityTitle.setText(title);
-        /////RECICLER VIEW///////////
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO: Handle error
+                error.printStackTrace();
 
+            }
+        });
+        queue.add(jsonObjectRequest);
 
-
-        /////RECICLER VIEW///////////
     }
+
 }
-
-
