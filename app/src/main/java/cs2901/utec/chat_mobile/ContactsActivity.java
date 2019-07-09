@@ -44,7 +44,7 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     public void getUsers(){
-        String url = "http://10.0.2.2:8080/users";
+        String url = "http://10.0.2.2:5000/mobile/user/allExcept/" + getIntent().getExtras().get("user_id").toString();
         RequestQueue queue = Volley.newRequestQueue(this);
         Map<String, String> params = new HashMap();
         JSONObject parameters = new JSONObject(params);
@@ -60,7 +60,6 @@ public class ContactsActivity extends AppCompatActivity {
                             JSONArray data = response.getJSONArray("data");
                             mAdapter = new ChatAdapter(data, getActivity(), userId);
                             mRecyclerView.setAdapter(mAdapter);
-
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -71,11 +70,8 @@ public class ContactsActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 // TODO: Handle error
                 error.printStackTrace();
-
             }
         });
         queue.add(jsonObjectRequest);
-
     }
-
 }

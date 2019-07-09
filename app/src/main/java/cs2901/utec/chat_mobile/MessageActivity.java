@@ -19,7 +19,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MessageActivity extends AppCompatActivity {
@@ -55,11 +59,10 @@ public class MessageActivity extends AppCompatActivity {
     public void getChats(){
         final String userFromId = getIntent().getExtras().get("user_from_id").toString();
         String userToId = getIntent().getExtras().get("user_to_id").toString();
-        String url = "http://10.0.2.2:8080/chats/<user_from_id>/<user_to_id>";
+        String url = "http://10.0.2.2:5000/mobile/messages/<user_from_id>/and/<user_to_id>";
         url = url.replace("<user_from_id>", userFromId);
         url = url.replace("<user_to_id>", userToId);
         RequestQueue queue = Volley.newRequestQueue(this);
-
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
@@ -72,6 +75,7 @@ public class MessageActivity extends AppCompatActivity {
                             int uID = Integer.parseInt(userFromId);
                             mAdapter = new MyMessageAdapter(data, getActivity(), uID);
                             mRecyclerView.setAdapter(mAdapter);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -88,7 +92,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     public void postMessage(){
-        String url = "http://10.0.2.2:8080/messages";
+        String url = "http://10.0.2.2:5000/mobile/messages/postMessage";
         RequestQueue queue = Volley.newRequestQueue(this);
         Map<String, String> params = new HashMap();
         final String user_from_id = getIntent().getExtras().get("user_from_id").toString();
@@ -113,10 +117,9 @@ public class MessageActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 // TODO: Handle error
                 error.printStackTrace();
-
             }
         });
         queue.add(jsonObjectRequest);
-
+        getChats();
     }
 }
